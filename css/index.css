@@ -1,0 +1,61 @@
+.main {
+  width: 100%;
+  height: 100%;
+  position: relative; }
+  .main .home {
+    width: 840px;
+    height: 640px;
+    margin: auto auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex; }
+    .main .home .left {
+      width: 200px;
+      background-color: rgba(0, 0, 0, 0.6); }
+      .main .home .left > h2 {
+        width: 100%;
+        height: 80px;
+        line-height: 80px;
+        text-align: center;
+        font-size: 24px;
+        font-weight: 400;
+        color: #C6D3E0; }
+        .main .home .left > h2 > span {
+          margin: 0 10px;
+          color: #f0f0f0; }
+      .main .home .left > h3 {
+        padding-left: 30px;
+        font-size: 18px;
+        font-weight: 400;
+        color: #C6D3E0;
+        margin-bottom: 10px; }
+        .main .home .left > h3 > span {
+          margin-left: 60px;
+          color: #f0f0f0; }
+      .main .home .left > p {
+        padding-left: 30px;
+        height: 40px;
+        line-height: 40px;
+        font-size: 16px;
+        font-weight: 400;
+        color: #C6D3E0;
+        position: relative; }
+        .main .home .left > p > span {
+          margin-left: 60px;
+          color: #f0f0f0; }
+        .main .home .left > p > img {
+          position: absolute; }
+      .main .home .left > p:nth-child(n+8) > span {
+        margin-left: 92px; }
+    .main .home .right {
+      width: 640px;
+      position: relative; }
+      .main .home .right canvas {
+        position: absolute;
+        top: 0;
+        left: 0; }
+
+/*# sourceMappingURL=index.css.map */

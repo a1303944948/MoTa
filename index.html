@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>魔塔次世代</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/index.css">
+    <script src="js/wm.js"></script>
+    <script src="js/mapJson.js"></script>
+</head>
+<body>
+    <div class="main">
+        <div class="home">
+            <div class="left">
+                <h2>第<span data-bind="Floor"></span>层</h2>
+                <h3>等级<span data-bind="Level"></span></h3>
+                <p>生命<span data-bind="Life"></span></p>
+                <p>攻击<span data-bind="Atk"></span></p>
+                <p>防御<span data-bind="Def"></span></p>
+                <p>经验<span data-bind="Exp"></span></p>
+                <p>金币<span data-bind="Gold"></span></p>
+                <p><img src="icon/Item01-01_1_1.png" alt="黄钥匙"><span data-bind="YellowKey"></span></p>
+                <p><img src="icon/Item01-01_1_2.png" alt="蓝钥匙"><span data-bind="BlueKey"></span></p>
+                <p><img src="icon/Item01-01_1_3.png" alt="红钥匙"><span data-bind="RedKey"></span></p>
+                <p><img src="icon/Item01-01_1_4.png" alt="绿钥匙"><span data-bind="GreenKey"></span></p>
+            </div>
+            <div class="right">
+                <canvas id="motaBackCanvas">您的浏览器暂不支持canvas</canvas>
+                <canvas id="motaCanvas">您的浏览器暂不支持canvas</canvas>
+            </div>
+        </div>
+    </div>
+    <script src="js/index.js"></script>
+</body>
+</html>
