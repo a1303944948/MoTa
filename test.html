@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/wm.js"></script>
+    <script src="https://cdn.bootcss.com/jszip/2.1.0/jszip.min.js"></script>
+    <script src="https://cdn.bootcss.com/jszip-utils/0.0.2/jszip-utils.min.js"></script>
+</head>
+<body>
+    <script>
+        console.time()
+        JSZipUtils.getBinaryContent('https://mengge-wechat.oss-cn-shanghai.aliyuncs.com/test/json.zip', function(err, data){
+            if(err){
+                throw err; // or handle the error
+            }
+            var zip = new JSZip(data);
+            function Uint8ArrayToString(fileData){
+                var dataString = "";
+                for (var i = 0; i < fileData.length; i++) {
+                    dataString += String.fromCharCode(fileData[i]);
+                }
+                return dataString;
+            }
+            var dirname = 'read';
+            // 转换格式字符串
+            let count = 0;
+            function filesName(file){
+                for(let i in file){
+                    return i;
+                }
+            }
+            var str = Uint8ArrayToString(zip.folder().files[filesName(zip.files)]._data.getContent());
+            //将字符串转换对象
+            var res = JSON.parse(str);
+            console.log(res);
+            console.timeEnd();
+        });
+        // const url = 'http://localhost:63342/www/MoTa/json.zip';
+        // fetch(url).then(function(data){
+        //     data.blob().then(function(msg){
+        //         log(msg);
+        //         // var reader = new FileReader();
+        //         // reader.onload = function(e){
+        //         //     log(reader.result);
+        //         // }
+        //         // reader.readAsText(msg);
+        //     });
+        // });
+        let a = {};
+        a.data = [];
+        a.data[0] = {};
+        a.data[0].a = 1;
+        a.data[0].b = 2;
+        let b = {};
+        b.data = [];
+        b.data[0] = a.data[0];
+        b.data[1] = {};
+        b.data[1].a = 1;
+        b.data[1].b = 2;
+        a.data[0].a = 10;
+        // b.data[0].a = a.data[0].a;
+        // b.data[0].b = a.data[0].b;
+    </script>
+</body>
+</html>

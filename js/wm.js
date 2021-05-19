@@ -298,15 +298,10 @@ function BlockDefault(e){
 //ajax请求
 function ajax(obj){	//type为设置请求方法 url为请求的地址 data为传递的参数 succ为成功时执行的操作 error为失败时执行的操作 json只能传入一个json字符串，代表将接收到的数据转换为json对象 header为设置请求头部信息 async为是否异步传入默认异步
 	var xhr = new XMLHttpRequest ();
-	if(obj.async !== true&&obj.async !== false){
-		obj.async = true;
-	}
+	obj.async?obj.async = obj.async:obj.async = true;
+	obj.type?obj.type = obj.type:obj.type = 'post';
 	xhr.open(obj.type,obj.url,obj.async);
-	if(obj.header){
-		xhr.setRequestHeader("Content-Type",obj.header);
-	}else{
-		xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-	}
+	obj.header?xhr.setRequestHeader("Content-Type",obj.header):xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 	if(obj.setHeader){
 		for(var i in obj.setHeader){
 			xhr.setRequestHeader(i,obj.setHeader[i]);
@@ -327,11 +322,7 @@ function ajax(obj){	//type为设置请求方法 url为请求的地址 data为传
 				if(obj.dataType === 'json'){
 					obj.success(JSON.parse(xhr.responseText));
 				}else{
-					if(typeof JSON.parse(xhr.responseText) == "object"){
-						obj.success(JSON.parse(xhr.responseText));
-					}else{
-						obj.success(xhr.responseText);
-					}
+					obj.success(xhr.responseText);
 				}
 			}else{
 				obj.error(xhr.status);
@@ -375,6 +366,7 @@ function objMonitor(object){
 	//每次调用时渲染
 	return new Proxy(object,{
 		set: (e,txt,x)=>{
+			e[txt] = x;
 			let domAll = dataBind();
 			for(let i of domAll){
 				let stringBind = String(i.dataset.bind).split('.');
