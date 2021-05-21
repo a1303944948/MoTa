@@ -12,7 +12,7 @@ let img = new Image();
 let thisState = {
     Floor: 0,       //楼层
     Level: 1,       //主角级别
-    Life: 1000,     //生命值
+    Hp: 1000,       //生命值
     Atk: 10,        //攻击力
     Def: 10,        //防御力
     Exp: 0,         //经验值
@@ -21,13 +21,10 @@ let thisState = {
     BlueKey: 0,     //蓝钥匙
     RedKey: 0,      //红钥匙
     GreenKey: 0,    //绿钥匙
-    Tips: '你好啊',  //提示语
+    Tips: '',       //提示语
+    Monster: {},    //参与战斗的怪物临时属性
 }
 thatState = objMonitor(thisState);
-setTimeout(()=>{
-    thatState.Tips = '你是不是在这里啊?';
-    c('tips')[0].children[0].style.opacity = 1;
-},2000);
 
 let dataMapBackFloor = dataMapBack[thatState.Floor];
 let dataMaplayerFloor = dataMaplayer[thatState.Floor];
@@ -84,6 +81,10 @@ let ElementArr = [  //元素添加表
         num: 7,
         code: 15,
         url: 'image/Item01-10.png',
+    },{ //查看当前层怪物信息表:16
+        num: 1,
+        code: 16,
+        url: 'image/Item01-05.png',
     },{ //黄钥匙:21
         num: 1,
         code: 21,
@@ -124,6 +125,30 @@ let ElementArr = [  //元素添加表
         num: 5,
         code: 30,
         url: 'image/Item01-01.png',
+    },{ //攻击水晶(小):31
+        num: 1,
+        code: 31,
+        url: 'image/Item01-Gem01.png',
+        name: '攻击水晶(小)',
+    },{ //防御水晶(小):32
+        num: 2,
+        code: 32,
+        url: 'image/Item01-Gem01.png',
+        name: '防御水晶(小)'
+    },{ //血瓶(小):33
+        num: 1,
+        code: 33,
+        url: 'image/Item01-02.png',
+        name: '血瓶(小)',
+    },{ //血瓶(中):34
+        num: 2,
+        code: 34,
+        url: 'image/Item01-02.png',
+        name: '血瓶(中)',
+    },{//金币:35
+        num: 1,
+        code: 35,
+        url: 'image/Item01-11.png',
     },{ //小刀:51
         num: 1,
         code: 51,
@@ -132,6 +157,66 @@ let ElementArr = [  //元素添加表
         num: 9,
         code: 52,
         url: 'image/Item02-06.png',
+    },{ //绿史莱姆:61
+        num: 1,
+        code: 61,
+        url: 'image/Monster01-01.png',
+        name: '绿史莱姆',
+        atk: 15,
+        def: 5,
+        hp: 20,
+        exp: 1,
+        gold: 1,
+    },{ //红史莱姆:62
+        num: 5,
+        code: 62,
+        url: 'image/Monster01-01.png',
+        name: '红史莱姆',
+        atk: 17,
+        def: 5,
+        hp: 30,
+        exp: 2,
+        gold: 3,
+    },{ //小蝙蝠:63
+        num: 1,
+        code: 63,
+        url: 'image/Monster03-01.png',
+        name: '小蝙蝠',
+        atk: 25,
+        def: 2,
+        hp: 30,
+        exp: 3,
+        gold: 5,
+    },{ //蓝法师:64
+        num: 1,
+        code: 64,
+        url: 'image/Monster06-01.png',
+        name: '蓝法师',
+        atk: 24,
+        def: 10,
+        hp: 40,
+        exp: 5,
+        gold: 7,
+    },{ //骷髅怪:65
+        num: 1,
+        code: 65,
+        url: 'image/Monster02-01.png',
+        name: '骷髅怪',
+        atk: 27,
+        def: 8,
+        hp: 50,
+        exp: 7,
+        gold: 8,
+    },{ //精英骷髅怪:66
+        num: 5,
+        code: 66,
+        url: 'image/Monster02-01.png',
+        name: '精英骷髅怪',
+        atk: 40,
+        def: 15,
+        hp: 80,
+        exp: 10,
+        gold: 15,
     }
 ]
 function StartBack(){   //背景层渲染
@@ -205,16 +290,65 @@ function heroMoveEven(x,y,num,hero){
     heroY = y;
     heroIndex.x = heroIndex.x + x;
     heroIndex.y = heroIndex.y + y;
+    Init();
 }
+
+//tips弹窗提示
+let Timore;
+function tips(text,time){
+    clearTimeout(Timore);
+    thatState.Tips = text;
+    c('tips')[0].children[0].style.opacity = 1;
+    Timore = setTimeout(function(){
+        c('tips')[0].children[0].style.opacity = 0;
+    },time?time:350);
+}
+
+//英雄撞击怪物触发战斗
+function monsterAttr(num){  //先获取怪物属性
+    let hp,monsterHp,result;
+    for(let i of ElementArr){
+        if(i.code == num){
+            thatState.Monster = i;
+            monsterHp = i.hp;
+            function battle(obj){
+                if(thatState.Atk > obj.def){
+                    monsterHp = monsterHp - (thatState.Atk - obj.def);
+                    hp = obj.atk - thatState.Def > 0?thatState.Hp - (obj.atk - thatState.Def):thatState.Hp;
+                    if(monsterHp > 0&&hp > 0){
+                        thatState.Hp = hp;
+                        battle(obj);
+                    }else if(monsterHp > 0 &&hp <= 0){
+                        thatState.Hp = hp;
+                        tips('勇士倒下了!');
+                        result = false;
+                    }else{
+                        thatState.Gold += obj.gold;
+                        thatState.Exp += obj.exp;
+                        tips(`勇士获得了胜利! 经验+${obj.exp}、金币+${obj.gold}`);
+                        result = true;
+                    }
+                }else{
+                    tips('你无法对该怪物造成伤害!');
+                    result = false;
+                }
+            }
+            battle(i);
+            return result;
+        }
+    }
+}
+
+//英雄行走触发各类事件
 function heroMove(x,y){
     switch(dataMaplayerFloor[heroIndex.y + y][heroIndex.x + x]){
         case 9:{    //普通行走
             heroMoveEven(x,y,9,8);
-            Init();
             break;
         }
         case 10:{    //碰到精灵事件
-            alern('欢迎您，勇士！公主被魔王困于魔塔最上层，只有战胜自我的勇士才可以救出公主，拯救国家与危难之中，我身后有我花费大量法力生成的全部钥匙+1道具，可助您一臂之力，ps：铁剑在第5层、铁盾在第9层，得到它们将助您快速度过游戏前期，加油吧！');
+            tips('欢迎您，勇士！公主被魔王困于魔塔最上层，只有战胜自我的勇士才可以救出公主，拯救国家与危难之中，我身后有我花费大量法力生成的全部钥匙+1道具，可助您一臂之力，ps：铁剑在第5层、铁盾在第9层，得到它们将助您快速度过游戏前期，加油吧！',4500);
+            // alern('欢迎您，勇士！公主被魔王困于魔塔最上层，只有战胜自我的勇士才可以救出公主，拯救国家与危难之中，我身后有我花费大量法力生成的全部钥匙+1道具，可助您一臂之力，ps：铁剑在第5层、铁盾在第9层，得到它们将助您快速度过游戏前期，加油吧！');
             dataMaplayerFloor[heroIndex.y + y][heroIndex.x + x] = 9;
             clearLayer(heroIndex.x + x,heroIndex.y + y,context);  //英雄移动过后清除英雄轨迹
             break;
@@ -231,67 +365,145 @@ function heroMove(x,y){
             Init();
             break;
         }
+        case 16:{
+            break;
+        }
         case 21:{   //碰到黄色钥匙
+            tips('黄色钥匙+1');
             heroMoveEven(x,y,9,8);
             thatState.YellowKey++;
-            Init();
             break;
         }
         case 22:{   //碰到蓝色钥匙
+            tips('蓝色钥匙+1');
             heroMoveEven(x,y,9,8);
             thatState.BlueKey++;
-            Init();
             break;
         }
         case 23:{   //碰到红色钥匙
+            tips('红色钥匙+1');
             heroMoveEven(x,y,9,8);
             thatState.RedKey++;
-            Init();
             break;
         }
         case 24:{   //碰到绿色钥匙
+            tips('绿色钥匙+1');
             heroMoveEven(x,y,9,8);
             thatState.GreenKey++;
-            Init();
             break;
         }
         case 30:{   //碰到所有钥匙+1
+            tips('所有钥匙+1');
             heroMoveEven(x,y,9,8);
             thatState.YellowKey++;
             thatState.BlueKey++;
             thatState.RedKey++;
             thatState.GreenKey++;
-            Init();
             break;
         }
-        case 25:{
+        case 25:{   //开启黄色门
+            if(thatState.YellowKey>0){
+                heroMoveEven(x,y,9,8);
+                thatState.YellowKey--;
+            }else{
+                tips('黄钥匙不足');
+            }
+            break;
+        }
+        case 26:{   //开启蓝色门
+            if(thatState.BlueKey>0){
+                heroMoveEven(x,y,9,8);
+                thatState.BlueKey--;
+            }else{
+                tips('蓝钥匙不足');
+            }
+            break;
+        }
+        case 27:{   //开启红色门
+            if(thatState.RedKey>0){
+                heroMoveEven(x,y,9,8);
+                thatState.RedKey--;
+            }else{
+                tips('红钥匙不足');
+            }
+            break;
+        }
+        case 31:{   //吃到攻击水晶(小)
             heroMoveEven(x,y,9,8);
-            thatState.YellowKey--;
-            Init();
+            thatState.Atk += 2;
+            tips('攻击力+2');
             break;
         }
-        case 26:{
+        case 32:{   //吃到防御水晶(小)
             heroMoveEven(x,y,9,8);
-            thatState.BlueKey--;
-            Init();
+            thatState.Def += 2;
+            tips('防御力+2');
             break;
         }
-        case 27:{
+        case 33:{   //吃到血瓶(小)
             heroMoveEven(x,y,9,8);
-            thatState.RedKey--;
-            Init();
+            thatState.Hp += 50;
+            tips('生命值+50');
             break;
         }
-        case 51:{
+        case 34:{   //吃到血瓶(中)
+            heroMoveEven(x,y,9,8);
+            thatState.Hp += 200;
+            tips('生命值+200');
+            break;
+        }
+        case 35:{   //捡到金币
+            heroMoveEven(x,y,9,8);
+            thatState.Gold += 100;
+            tips('金币+100');
+            break;
+        }
+        case 51:{   //获得小刀
+            tips('得到小刀，攻击力+5');
             heroMoveEven(x,y,9,8);
             thatState.Atk += 5;
-            Init();
             break;
         }
-        case 52:{
+        case 52:{   //获得小盾
+            tips('得到小盾，防御力+5');
             heroMoveEven(x,y,9,8);
             thatState.Def += 5;
-            Init();
+            break;
+        }
+        case 61:{   //绿史莱姆
+            if(monsterAttr(61)){
+                heroMoveEven(x,y,9,8);
+            }
+            break;
+        }
+        case 62:{   //红史莱姆
+            if(monsterAttr(62)){
+                heroMoveEven(x,y,9,8);
+            }
+            break;
+        }
+        case 63:{   //小蝙蝠
+            if(monsterAttr(63)){
+                heroMoveEven(x,y,9,8);
+            }
+            break;
+        }
+        case 64:{   //蓝法师
+            if(monsterAttr(64)){
+                heroMoveEven(x,y,9,8);
+            }
+            break;
+        }
+        case 65:{   //骷髅怪
+            if(monsterAttr(65)){
+                heroMoveEven(x,y,9,8);
+            }
+            break;
+        }
+        case 66:{   //精英骷髅怪
+            if(monsterAttr(66)){
+                heroMoveEven(x,y,9,8);
+            }
             break;
         }
         default: 

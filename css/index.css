@@ -50,6 +50,11 @@
           position: absolute; }
       .main .home .left > p:nth-child(n+8) > span {
         margin-left: 92px; }
+      .main .home .left .controller {
+        width: calc(100% - 60px);
+        height: 150px;
+        margin-left: 30px;
+        background-color: rgba(255, 255, 255, 0.3); }
     .main .home .right {
       width: 640px;
       position: relative; }
@@ -57,6 +62,20 @@
         position: absolute;
         top: 0;
         left: 0; }
+      .main .home .right .right_panel {
+        width: calc(100% - 64px);
+        height: calc(100% - 64px);
+        position: absolute;
+        top: 32px;
+        left: 32px;
+        background-color: rgba(0, 0, 0, 0.3);
+        overflow-y: auto;
+        overflow-x: hidden; }
+        .main .home .right .right_panel .right_panel_item {
+          width: 100%;
+          height: 60px;
+          background-color: red;
+          display: flex; }
 
 .tips {
   position: absolute;
@@ -66,11 +85,15 @@
   margin: 0 auto;
   text-align: center; }
   .tips > span {
+    display: inline-block;
+    width: 400px;
     background-color: rgba(0, 0, 0, 0.6);
     color: #fff;
     padding: 15px 20px;
     border-radius: 5px;
     transition: .5s;
+    position: relative;
+    right: -100px;
     opacity: 0; }
 
 /*# sourceMappingURL=index.css.map */

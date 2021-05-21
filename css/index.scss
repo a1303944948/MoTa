@@ -1,3 +1,4 @@
+$leftWidth: 200px;
 .main{
     width: 100%;
     height: 100%;
@@ -13,7 +14,7 @@
         bottom: 0;
         display: flex;
         .left{
-            width: 200px;
+            width: $leftWidth;
             background-color: rgba(0,0,0,.60);
             >h2{
                 width: 100%;
@@ -60,6 +61,12 @@
                     margin-left: 92px;
                 }
             }
+            .controller{
+                width: calc(100% - 60px);
+                height: 150px;
+                margin-left: 30px;
+                background-color: rgba(255,255,255,.3);
+            }
         }
         .right{
             width: 640px;
@@ -68,6 +75,25 @@
                 position: absolute;
                 top: 0;
                 left: 0;
+            }
+            .right_panel{
+                width: calc(100% - 64px);
+                height: calc(100% - 64px);
+                position: absolute;
+                top: 32px;
+                left: 32px;
+                background-color: rgba(0,0,0,.3);
+                overflow-y: auto;
+                overflow-x: hidden;
+                .right_panel_item{
+                    width: 100%;
+                    height: 60px;
+                    background-color: red;
+                    display: flex;
+                    >div{
+                        
+                    }
+                }
             }
         }
     }
@@ -80,11 +106,15 @@
     margin: 0 auto;
     text-align: center;
     >span{
+        display: inline-block;
+        width: 400px;
         background-color: rgba(0,0,0,.6);
         color: #fff;
         padding: 15px 20px;
         border-radius: 5px;
         transition: .5s;
+        position: relative;
+        right: -$leftWidth/2;
         opacity: 0;
     }
 }
