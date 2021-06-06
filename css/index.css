@@ -1,3 +1,19 @@
+::-webkit-scrollbar-track-piece {
+  background-color: white;
+  border-radius: 3px; }
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px; }
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.3);
+  background-clip: padding-box;
+  border-radius: 3px; }
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #bbb; }
+
 .main {
   width: 100%;
   height: 100%;
@@ -54,11 +70,17 @@
         width: calc(100% - 60px);
         height: 150px;
         margin-left: 30px;
-        background-color: rgba(255, 255, 255, 0.3); }
+        background-color: rgba(255, 255, 255, 0.3);
+        display: flex;
+        flex-wrap: wrap; }
+        .main .home .left .controller .controller_list {
+          width: 32px;
+          height: 32px;
+          background-repeat: no-repeat; }
     .main .home .right {
       width: 640px;
       position: relative; }
-      .main .home .right canvas {
+      .main .home .right > canvas {
         position: absolute;
         top: 0;
         left: 0; }
@@ -68,14 +90,17 @@
         position: absolute;
         top: 32px;
         left: 32px;
-        background-color: rgba(0, 0, 0, 0.3);
+        background-color: rgba(0, 0, 0, 0.7);
         overflow-y: auto;
         overflow-x: hidden; }
         .main .home .right .right_panel .right_panel_item {
           width: 100%;
           height: 60px;
-          background-color: red;
-          display: flex; }
+          display: flex;
+          align-items: center; }
+          .main .home .right .right_panel .right_panel_item > div {
+            margin-left: 20px;
+            color: #fff; }
 
 .tips {
   position: absolute;

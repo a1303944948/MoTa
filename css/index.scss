@@ -1,4 +1,22 @@
 $leftWidth: 200px;
+
+::-webkit-scrollbar-track-piece { //滚动条凹槽的颜色，还可以设置边框属性
+    background-color:rgba(255,255,255,1);
+    border-radius: 3px;
+}
+::-webkit-scrollbar {//滚动条的宽度
+    width:6px;
+    height:6px;
+}
+::-webkit-scrollbar-thumb {//滚动条的设置
+    background-color: rgba(0,0,0,.3);
+    background-clip:padding-box;
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color:#bbb;
+}
+
 .main{
     width: 100%;
     height: 100%;
@@ -66,12 +84,19 @@ $leftWidth: 200px;
                 height: 150px;
                 margin-left: 30px;
                 background-color: rgba(255,255,255,.3);
+                display: flex;
+                flex-wrap: wrap;
+                .controller_list{
+                    width: 32px;
+                    height: 32px;
+                    background-repeat: no-repeat;
+                }
             }
         }
         .right{
             width: 640px;
             position: relative;
-            canvas{
+            >canvas{
                 position: absolute;
                 top: 0;
                 left: 0;
@@ -82,16 +107,17 @@ $leftWidth: 200px;
                 position: absolute;
                 top: 32px;
                 left: 32px;
-                background-color: rgba(0,0,0,.3);
+                background-color: rgba(0,0,0,.7);
                 overflow-y: auto;
                 overflow-x: hidden;
                 .right_panel_item{
                     width: 100%;
                     height: 60px;
-                    background-color: red;
                     display: flex;
+                    align-items: center;
                     >div{
-                        
+                        margin-left: 20px;
+                        color: #fff;
                     }
                 }
             }

@@ -7,7 +7,6 @@ canvas.width = Width;           //画布宽度赋值
 canvas.height = Height;         //画布高度赋值
 backCanvas.width = Width;       //背景画布宽度赋值
 backCanvas.height = Height;     //背景画布高度赋值
-let img = new Image();
 
 let thisState = {
     Floor: 0,       //楼层
@@ -22,12 +21,14 @@ let thisState = {
     RedKey: 0,      //红钥匙
     GreenKey: 0,    //绿钥匙
     Tips: '',       //提示语
+    goal: {},       //当前碰触的目标数据
     Monster: {},    //参与战斗的怪物临时属性
+    MonsterCode: [],//当前层数怪物Code合集
 }
 thatState = objMonitor(thisState);
 
-let dataMapBackFloor = dataMapBack[thatState.Floor];
-let dataMaplayerFloor = dataMaplayer[thatState.Floor];
+let dataMapBackFloor = dataMapBack[thatState.Floor];    //获取当前层的背景图层数据
+let dataMaplayerFloor = dataMaplayer[thatState.Floor];  //获取当前层的渲染图层数据
 
 //备注区域
 //anMiteImage('image/Other07.png',dataMaplayer,14,0,cxt);          //绘制青草地
@@ -81,9 +82,13 @@ let ElementArr = [  //元素添加表
         num: 7,
         code: 15,
         url: 'image/Item01-10.png',
-    },{ //查看当前层怪物信息表:16
+    },{ //怪物手册:16
         num: 1,
         code: 16,
+        url: 'image/Item01-05.png',
+    },{ //笔记本:17
+        num: 2,
+        code: 17,
         url: 'image/Item01-05.png',
     },{ //黄钥匙:21
         num: 1,
@@ -229,6 +234,20 @@ function StartBack(){   //背景层渲染
     })
 }
 
+let props;
+function prop(obj){
+    props = creat('div');
+    props.className = 'controller_list';
+    props.style.backgroundImage = 'url("'+obj.url+'")';
+    props.style.backgroundPosition = '-'+obj.data.imageObj.x+'px '+'-'+obj.data.imageObj.y+'px';
+    props.onclick = obj.click;
+    c('controller')[0].append(props);
+}
+
+c('right_panel')[0].onclick = function(){
+    this.style.display = 'none';
+}
+
 let heroIndex = {}; //定位英雄位置
 let heroX,heroY;    //英雄上一次走路使用x，y轴
 function heroLocation(){   //定位英雄位置
@@ -253,13 +272,20 @@ function layerArr(arr){
     })
     return arrs;
 }
+let layerArrJson;
 function Init(){    //layer层渲染
     clearLayer(heroIndex.x,heroIndex.y,context);  //英雄当前位置清空,防止出现叠模型
-    layerArr(dataMaplayerFloor).map((item)=>{
-        if(item != 1&&item != 9){
-            ElementArr.map((items)=>{
-                if(items.code == item){
+    layerArrJson = layerArr(dataMaplayerFloor);
+    thatState.MonsterCode = [];
+    layerArrJson.map(item => {
+        if(item != 1&&item != 9) {
+            ElementArr.map(items => {
+                if(items.code === item){
                     anMiteImage(items.url,dataMaplayerFloor,items.num,item,context);
+                    if(items.hp){
+                        thatState.MonsterCode.push(items);
+                    }
+                    return;
                 }
             })
         }
@@ -341,6 +367,11 @@ function monsterAttr(num){  //先获取怪物属性
 
 //英雄行走触发各类事件
 function heroMove(x,y){
+    for(let i of ElementArr){   //获取当前碰撞的对象数据
+        if(i.code === dataMaplayerFloor[heroIndex.y + y][heroIndex.x + x]){
+            thisState.goal = i;
+        }
+    }
     switch(dataMaplayerFloor[heroIndex.y + y][heroIndex.x + x]){
         case 9:{    //普通行走
             heroMoveEven(x,y,9,8);
@@ -348,7 +379,6 @@ function heroMove(x,y){
         }
         case 10:{    //碰到精灵事件
             tips('欢迎您，勇士！公主被魔王困于魔塔最上层，只有战胜自我的勇士才可以救出公主，拯救国家与危难之中，我身后有我花费大量法力生成的全部钥匙+1道具，可助您一臂之力，ps：铁剑在第5层、铁盾在第9层，得到它们将助您快速度过游戏前期，加油吧！',4500);
-            // alern('欢迎您，勇士！公主被魔王困于魔塔最上层，只有战胜自我的勇士才可以救出公主，拯救国家与危难之中，我身后有我花费大量法力生成的全部钥匙+1道具，可助您一臂之力，ps：铁剑在第5层、铁盾在第9层，得到它们将助您快速度过游戏前期，加油吧！');
             dataMaplayerFloor[heroIndex.y + y][heroIndex.x + x] = 9;
             clearLayer(heroIndex.x + x,heroIndex.y + y,context);  //英雄移动过后清除英雄轨迹
             break;
@@ -366,6 +396,44 @@ function heroMove(x,y){
             break;
         }
         case 16:{
+            tips('获得怪物手册，点击左下角对应图标可以查看当前怪物的所有详细信息！',2000);
+            heroMoveEven(x,y,9,8);
+            prop({
+                data: Images(thisState.goal.url,thisState.goal.num),
+                url: thisState.goal.url,
+                click: function(){
+                    c('right_panel')[0].innerHTML = "";
+                    let rightPanelItem,div;
+                    for(let i of thisState.MonsterCode){
+                        rightPanelItem = creat('div');
+                        rightPanelItem.className = 'right_panel_item';
+                        div = creats('div',7);
+                        div[0].innerHTML = '名称：'+i.name;
+                        div[1].innerHTML = '生命：'+i.hp;
+                        div[2].innerHTML = '攻击：'+i.atk;
+                        div[3].innerHTML = '防御：'+i.def;
+                        div[4].innerHTML = '金币：'+i.gold;
+                        div[5].innerHTML = '经验：'+i.exp;
+                        div[6].innerHTML = '伤害：'+i.gold;
+                        rightPanelItem.setAppend(div);
+                        c('right_panel')[0].append(rightPanelItem);
+                    }
+                    thisState.MonsterCode;
+                    c('right_panel')[0].style.display = 'block';
+                }
+            });
+            break;
+        }
+        case 17:{
+            tips('获得笔记本，纪录所有的NPC对话，点击左下角对应图标即可查看！',2000);
+            heroMoveEven(x,y,9,8);
+            prop({
+                data: Images(thisState.goal.url,thisState.goal.num),
+                url: thisState.goal.url,
+                click: function(){
+                    log(123);
+                }
+            });
             break;
         }
         case 21:{   //碰到黄色钥匙
