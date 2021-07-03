@@ -102,6 +102,7 @@ $leftWidth: 200px;
                 left: 0;
             }
             .right_panel{
+                display: none;
                 width: calc(100% - 64px);
                 height: calc(100% - 64px);
                 position: absolute;
@@ -116,8 +117,19 @@ $leftWidth: 200px;
                     display: flex;
                     align-items: center;
                     >div{
+                        height: 60px;
+                        line-height: 60px;
                         margin-left: 20px;
                         color: #fff;
+                        font-size: 12px;
+                        >div{
+                            display: inline-block;
+                            width: 32px;
+                            height: 32px;
+                            margin-right: 5px;
+                            position: relative;
+                            top: 10px;
+                        }
                     }
                 }
             }

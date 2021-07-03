@@ -403,18 +403,21 @@ function heroMove(x,y){
                 url: thisState.goal.url,
                 click: function(){
                     c('right_panel')[0].innerHTML = "";
-                    let rightPanelItem,div;
+                    let rightPanelItem,div,imageData;
+                    log(thisState.MonsterCode);
                     for(let i of thisState.MonsterCode){
+                        imageData = Images(i.url,i.num);
                         rightPanelItem = creat('div');
                         rightPanelItem.className = 'right_panel_item';
                         div = creats('div',7);
-                        div[0].innerHTML = '名称：'+i.name;
+                        log(imageData);
+                        div[0].innerHTML = '<div style="background-image: url('+i.url+');background-position: -'+imageData.imageObj.x+'px -'+imageData.imageObj.y+'px"></div>' +i.name;
                         div[1].innerHTML = '生命：'+i.hp;
                         div[2].innerHTML = '攻击：'+i.atk;
                         div[3].innerHTML = '防御：'+i.def;
                         div[4].innerHTML = '金币：'+i.gold;
                         div[5].innerHTML = '经验：'+i.exp;
-                        div[6].innerHTML = '伤害：'+i.gold;
+                        div[6].innerHTML = '伤害：'+warDamage(thisState.Atk,thisState.Def,i.atk,i.def,i.hp);
                         rightPanelItem.setAppend(div);
                         c('right_panel')[0].append(rightPanelItem);
                     }
@@ -596,6 +599,27 @@ window.onkeydown = function(e){
     }
 };
 
+
+//战斗伤害计算方法
+function warDamage(heroAtk,heroDef,monsterAtk,monsterDef,monsterHp){
+    if(heroAtk > monsterDef){
+        let count = 0;
+        let settle;
+        function war(atk,def,hp){
+            if(hp > atk - def){
+                hp = hp - atk + def;
+                count ++;
+                war(atk,def,hp);
+            }else{
+                settle = (monsterAtk - heroDef)*count;
+            }
+        }
+        war(heroAtk,monsterDef,monsterHp);
+        return settle >= 0?settle:0;
+    }else{
+        return '无法战胜';
+    }
+}
 
 //绘制时调用方法   url为绘制的对象，arr为数据对象，num为需要渲染的图片序号，number为需要绘制的内容编号，cxt为绘制的画布对象
 function anMiteImage(url,arr,num,number,cxt){
